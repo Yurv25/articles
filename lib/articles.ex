@@ -51,4 +51,17 @@ defmodule Articles do
       e in RuntimeError -> e
     end
   end
+
+  #Display a single article details
+  def single_article(id) do
+    key = "32d5a5dd7349284c35bf1b78a3151a07"
+    token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwcC5lbGV2aW8tc3RhZ2luZy5jb20iLCJzdWIiOiI1ZDEyY2JjMDg4ODM1IiwiZXhwIjozMTM4NDQzMjM0LCJpYXQiOjE1NjE2NDMyMzQsImp0aSI6IjE2ZmtpY2pjam10ZGNiZW9mdHQ2NW1sZDlqZnNoYWZyIiwKICAidXNlck5hbWUiIDogInl1cmlhbGVqYW5kcm8udmFsdmVyZGVAZ21haWwuY29tIiwKICAidXNlcklkIiA6IDEzMDM1LAogICJzY29wZSIgOiBbICJyZWFkOmFydGljbGUiIF0KfQ.f-bmbNOkdlCmck0nUrjmjnqLNrSuro4C55H-qLtNlZA"
+    url = "https://api.elevio-staging.com/v1/articles/#{id}"
+    headers = ["Authorization": "Bearer #{token}", "Accept": "Application/json; Charset=utf-8", "x-api-key": "#{key}"]
+    response = HTTPoison.get!(url,headers);
+    req = Poison.decode!(response.body)
+    IO.puts("Article with id: #{id}")
+    IO.inspect(req["article"])
+    IO.puts("****************************")
+  end
 end
