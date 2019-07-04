@@ -2,7 +2,7 @@ defmodule Articles do
   @moduledoc """
   Documentation for Articles.
   """
-
+  #This program runs an api which contains articles and display its details. 
   @doc """
   Hello world.
 
@@ -26,6 +26,7 @@ defmodule Articles do
       total_pages = req["total_pages"]
       articles= (req["articles"])
       IO.inspect(articles)
+      #Paginate through all the pages
       if total_pages > 1 do
         Enum.each(2..total_pages, fn(x) ->
           IO.puts("********** Page number: #{x} *************")
@@ -35,6 +36,7 @@ defmodule Articles do
           IO.inspect(articles)
         end)
       end 
+      #ask for input from the user and search for the article
       input = IO.gets("Enter a keyword to search and press ENTER: ")
       keyword = String.replace(input,"\n","")
       search_url =  "https://api.elevio-staging.com/v1/search/en?query=#{keyword}"
@@ -43,12 +45,10 @@ defmodule Articles do
       results = (srch_req["results"])
       IO.inspect (results)
       IO.puts "Final Results"
-        #IO.inspect articles[:access]
-        #articles = get_in(req,[Access.all(),"articles"])      
-        #IO.inspect (req["articles"])
-        #IO.puts (total_pages)
+      
+      raise "Article can't be read!"
     rescue
-      e in RuntimeError -> e
+      e in RuntimeError -> IO.puts("An error occurred: " <> e.message)
     end
   end
 
