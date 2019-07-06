@@ -4,7 +4,8 @@ defmodule Articles do
   Author: Yuri Valverde, July 4th, 2019
   """
   #This program runs an api which contains articles and display it's details.
-  #Also ask for the user input to  
+  #Also ask for the user input to search an article by keyword
+  #For last a function that display a single article details by id.
   
   
   def read_articles do
@@ -15,19 +16,17 @@ defmodule Articles do
       url = "https://api.elevio-staging.com/v1/articles?page=1&status=published"
       headers = ["Authorization": "Bearer #{token}", "Accept": "Application/json; Charset=utf-8", "x-api-key": "#{key}"]
       
-      
-      #Calling the API
+      #Calling the API and checking if any error in the response
       response = HTTPoison.get!(url,headers);
       if response.status_code != 200 do
         if response == [] do
-          raise empty()
+          raise "No information returned of the articles"
         else
-          raise "Incorrect key"
+          raise "The request for articles it's incorrect"
         end
       end
 
       IO.puts("********** Page number: 1 *************")
-      #response = HTTPoison.get!(url,headers);
       req = Poison.decode!(response.body)
       total_pages = req["total_pages"]
       articles= (req["articles"])
@@ -57,28 +56,32 @@ defmodule Articles do
       IO.puts "Final Results"
 
     rescue
-      e in RuntimeError -> IO.puts("catch error " <> e.message)
+      e in RuntimeError -> IO.puts("Error details: " <> e.message)
     end
   end
 
   #Display a single article details
   def single_article(id) do
-    key = "32d5a5dd7349284c35bf1b78a3151a07"
-    token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwcC5lbGV2aW8tc3RhZ2luZy5jb20iLCJzdWIiOiI1ZDEyY2JjMDg4ODM1IiwiZXhwIjozMTM4NDQzMjM0LCJpYXQiOjE1NjE2NDMyMzQsImp0aSI6IjE2ZmtpY2pjam10ZGNiZW9mdHQ2NW1sZDlqZnNoYWZyIiwKICAidXNlck5hbWUiIDogInl1cmlhbGVqYW5kcm8udmFsdmVyZGVAZ21haWwuY29tIiwKICAidXNlcklkIiA6IDEzMDM1LAogICJzY29wZSIgOiBbICJyZWFkOmFydGljbGUiIF0KfQ.f-bmbNOkdlCmck0nUrjmjnqLNrSuro4C55H-qLtNlZA"
-    url = "https://api.elevio-staging.com/v1/articles/#{id}"
-    headers = ["Authorization": "Bearer #{token}", "Accept": "Application/json; Charset=utf-8", "x-api-key": "#{key}"]
-    response = HTTPoison.get!(url,headers);
-    req = Poison.decode!(response.body)
-    IO.puts("Article with id: #{id}")
-    IO.inspect(req["article"])
-    IO.puts("****************************")
-  end
+    try do
+      key = "32d5a5dd7349284c35bf1b78a3151a07"
+      token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwcC5lbGV2aW8tc3RhZ2luZy5jb20iLCJzdWIiOiI1ZDEyY2JjMDg4ODM1IiwiZXhwIjozMTM4NDQzMjM0LCJpYXQiOjE1NjE2NDMyMzQsImp0aSI6IjE2ZmtpY2pjam10ZGNiZW9mdHQ2NW1sZDlqZnNoYWZyIiwKICAidXNlck5hbWUiIDogInl1cmlhbGVqYW5kcm8udmFsdmVyZGVAZ21haWwuY29tIiwKICAidXNlcklkIiA6IDEzMDM1LAogICJzY29wZSIgOiBbICJyZWFkOmFydGljbGUiIF0KfQ.f-bmbNOkdlCmck0nUrjmjnqLNrSuro4C55H-qLtNlZA"
+      url = "https://api.elevio-staging.com/v1/articles/#{id}"
+      headers = ["Authorization": "Bearer #{token}", "Accept": "Application/json; Charset=utf-8", "x-api-key": "#{key}"]
 
-  def my_error() do
-   IO.puts("Error getting articles")
-  end
-
-  def empty do
-    IO.puts ("Empty response")
+      response = HTTPoison.get!(url,headers);
+      if response.status_code != 200 do
+        if response == [] do
+          raise "No information returned for the article"
+        else
+          raise "The request for this article it's incorrect or not found"
+        end
+      end
+      req = Poison.decode!(response.body)
+      IO.puts("Article with id: #{id}")
+      IO.inspect(req["article"])
+      IO.puts("***********DONE**************")
+    rescue
+      e in RuntimeError -> IO.puts("Error details: " <> e.message)
+    end
   end
 end
